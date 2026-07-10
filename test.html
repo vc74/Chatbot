@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Chat</title>
+</head>
+<body>
+    <h1>Test Chatbot</h1>
+    <input type="text" id="msg" placeholder="Type message">
+    <button onclick="sendMsg()">Send</button>
+    <div id="result"></div>
+    
+    <script>
+    async function sendMsg() {
+        const msg = document.getElementById('msg').value;
+        const resultDiv = document.getElementById('result');
+        
+        try {
+            resultDiv.innerHTML = 'Sending...';
+            
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    message: msg,
+                    session_id: null
+                })
+            });
+            
+            console.log('Status:', response.status);
+            const data = await response.json();
+            console.log('Data:', data);
+            
+            resultDiv.innerHTML = '<strong>Reply:</strong> ' + data.reply;
+            
+        } catch (error) {
+            console.error('Error:', error);
+            resultDiv.innerHTML = '<strong>Error:</strong> ' + error.message;
+        }
+    }
+    </script>
+</body>
+</html>

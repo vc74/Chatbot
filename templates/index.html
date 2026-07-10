@@ -1412,44 +1412,51 @@
     function speakText(text) {
       if (!voiceSettings.autoSpeech) return;
       
-      if (synthesis.speaking) {
-        synthesis.cancel();
-      }
-      
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = voiceSettings.speechRate;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-      
-      if (voiceSettings.selectedVoice) {
-        utterance.voice = voiceSettings.selectedVoice;
-      } else {
-        // Auto-select best voice
-        const voices = synthesis.getVoices();
-        const preferredVoice = voices.find(voice => 
-          voice.name.includes('Google') || 
-          voice.name.includes('Microsoft') ||
-          (voice.lang.includes('en') && voice.localService)
-        );
-        if (preferredVoice) {
-          utterance.voice = preferredVoice;
+      try {
+        if (synthesis.speaking) {
+          synthesis.cancel();
         }
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = voiceSettings.speechRate;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+        
+        if (voiceSettings.selectedVoice) {
+          utterance.voice = voiceSettings.selectedVoice;
+        } else {
+          // Auto-select best voice
+          const voices = synthesis.getVoices();
+          const preferredVoice = voices.find(voice => 
+            voice.name.includes('Google') || 
+            voice.name.includes('Microsoft') ||
+            (voice.lang.includes('en') && voice.localService)
+          );
+          if (preferredVoice) {
+            utterance.voice = preferredVoice;
+          }
+        }
+        
+        // Show speech bubble
+        const speechText = document.getElementById('speech-text');
+        if (speechText) {
+          speechText.textContent = text.substring(0, 100) + (text.length > 100 ? '...' : '');
+          speechBubble.classList.add('visible');
+        }
+        
+        utterance.onend = () => {
+          if (speechBubble) speechBubble.classList.remove('visible');
+        };
+        
+        utterance.onerror = (err) => {
+          console.log('Speech error:', err);
+          if (speechBubble) speechBubble.classList.remove('visible');
+        };
+        
+        synthesis.speak(utterance);
+      } catch (error) {
+        console.log('Speech synthesis error:', error);
       }
-      
-      // Show speech bubble
-      const speechText = document.getElementById('speech-text');
-      speechText.textContent = text.substring(0, 100) + (text.length > 100 ? '...' : '');
-      speechBubble.classList.add('visible');
-      
-      utterance.onend = () => {
-        speechBubble.classList.remove('visible');
-      };
-      
-      utterance.onerror = () => {
-        speechBubble.classList.remove('visible');
-      };
-      
-      synthesis.speak(utterance);
     }
 
     // Chat History Functions
@@ -1561,10 +1568,14 @@
         conversationHistory.push({ role: 'assistant', content });
         lastResponse = content;
         // Speak assistant responses
-        if (synthesis && !synthesis.speaking) {
-          // Remove markdown formatting for speech
-          const textOnly = content.replace(/[*_`#\[\]]/g, '').replace(/\n+/g, ' ');
-          speakText(textOnly);
+        try {
+          if (synthesis && voiceSettings.autoSpeech) {
+            // Remove markdown formatting for speech
+            const textOnly = content.replace(/[*_`#\[\]]/g, '').replace(/\n+/g, ' ');
+            speakText(textOnly);
+          }
+        } catch (error) {
+          console.log('Speech synthesis unavailable:', error);
         }
       }
     }
@@ -1595,24 +1606,35 @@
           })
         });
 
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const data = await response.json();
-        hideTyping();
-        addMessage(data.reply, false);
+        console.log('Response data:', data);
         
-        // Update session ID and reload history
-        if (data.session_id) {
-          currentSessionId = data.session_id;
-          loadChatHistory();
+        hideTyping();
+        
+        if (data.reply) {
+          addMessage(data.reply, false);
+          
+          // Update session ID and reload history
+          if (data.session_id) {
+            currentSessionId = data.session_id;
+            loadChatHistory();
+          }
+        } else {
+          throw new Error('No reply in response');
         }
 
       } catch (error) {
         hideTyping();
+        console.error('Chat error details:', error);
+        console.error('Error message:', error.message);
         addMessage('⚠️ Sorry, something went wrong. Please try again.', false);
-        console.error('Chat error:', error);
       } finally {
         setWaiting(false);
         messageInput.focus();
