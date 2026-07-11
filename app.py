@@ -3,12 +3,14 @@ import json
 import uuid
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, session
+from flask_cors import CORS
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 app.secret_key = os.environ.get("SECRET_KEY", "your-secret-key-here")
 
 # Validate API key on startup

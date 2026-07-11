@@ -389,7 +389,7 @@
       position: absolute;
       content: "";
       height: 18px;
-      width: 18px;
+      width: 18px;    
       left: 3px;
       bottom: 3px;
       background-color: white;
@@ -1634,7 +1634,17 @@
         hideTyping();
         console.error('Chat error details:', error);
         console.error('Error message:', error.message);
-        addMessage('⚠️ Sorry, something went wrong. Please try again.', false);
+        console.error('Error stack:', error.stack);
+        
+        // Alert the exact error
+        alert('ERROR DETAILS:\n\n' + 
+              'Message: ' + error.message + '\n\n' +
+              'Type: ' + error.name + '\n\n' +
+              'Please screenshot this and share it.');
+        
+        // Show detailed error on page
+        const errorMsg = `⚠️ Error: ${error.message}`;
+        addMessage(errorMsg, false);
       } finally {
         setWaiting(false);
         messageInput.focus();
