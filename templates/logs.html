@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatBot Logs</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Consolas', 'Monaco', monospace;
+      background: #0d1117;
+      color: #e6edf3;
+      padding: 20px;
+    }
+    h1 {
+      color: #58a6ff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .controls {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 8px 16px;
+      background: #238636;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover { background: #2ea043; }
+    .log-container {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px;
+      max-height: 80vh;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .log-line {
+      padding: 4px 0;
+      border-bottom: 1px solid #21262d;
+    }
+    .log-line:last-child {
+      border-bottom: none;
+    }
+    .INFO { color: #58a6ff; }
+    .WARNING { color: #d29922; }
+    .ERROR { color: #f85149; }
+    .timestamp { color: #7d8590; }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .stats {
+      margin-bottom: 20px;
+      padding: 12px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      display: flex;
+      gap: 20px;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #7d8590;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #58a6ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 ChatBot Logs</h1>
+  
+  <div class="stats" id="stats">
+    <div class="stat-item">
+      <span class="stat-label">Total Lines</span>
+      <span class="stat-value" id="total-lines">-</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">INFO</span>
+      <span class="stat-value" id="info-count">-</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">WARNING</span>
+      <span class="stat-value" id="warning-count">-</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">ERROR</span>
+      <span class="stat-value" id="error-count">-</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button onclick="loadLogs()">🔄 Refresh</button>
+    <button onclick="clearDisplay()">🗑️ Clear Display</button>
+    <button onclick="autoRefresh()">⚡ Auto-Refresh (5s)</button>
+  </div>
+
+  <div class="log-container" id="logs">
+    Loading logs...
+  </div>
+
+  <a href="/" class="back-link">← Back to ChatBot</a>
+
+  <script>
+    let autoRefreshInterval = null;
+
+    function formatLogLine(line) {
+      let className = '';
+      if (line.includes('INFO')) className = 'INFO';
+      else if (line.includes('WARNING')) className = 'WARNING';
+      else if (line.includes('ERROR')) className = 'ERROR';
+      
+      return `<div class="log-line ${className}">${escapeHtml(line)}</div>`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function loadLogs() {
+      try {
+        const res = await fetch('/logs');
+        const data = await res.json();
+        
+        if (data.logs) {
+          const logsDiv = document.getElementById('logs');
+          logsDiv.innerHTML = data.logs.map(formatLogLine).join('');
+          logsDiv.scrollTop = logsDiv.scrollHeight;
+          
+          // Update stats
+          const total = data.logs.length;
+          const info = data.logs.filter(l => l.includes('INFO')).length;
+          const warning = data.logs.filter(l => l.includes('WARNING')).length;
+          const error = data.logs.filter(l => l.includes('ERROR')).length;
+          
+          document.getElementById('total-lines').textContent = total;
+          document.getElementById('info-count').textContent = info;
+          document.getElementById('warning-count').textContent = warning;
+          document.getElementById('error-count').textContent = error;
+        }
+      } catch (err) {
+        document.getElementById('logs').innerHTML = 
+          `<div class="log-line ERROR">Error loading logs: ${err.message}</div>`;
+      }
+    }
+
+    function clearDisplay() {
+      document.getElementById('logs').innerHTML = '<div class="log-line">Display cleared. Click Refresh to reload.</div>';
+    }
+
+    function autoRefresh() {
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        alert('Auto-refresh stopped');
+      } else {
+        autoRefreshInterval = setInterval(loadLogs, 5000);
+        alert('Auto-refresh enabled (every 5 seconds)');
+        loadLogs();
+      }
+    }
+
+    // Load logs on page load
+    loadLogs();
+  </script>
+</body>
+</html>

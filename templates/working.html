@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatBot - Working Version</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg-primary: #0d1117;
+      --bg-surface: #161b22;
+      --bg-elevated: #21262d;
+      --text-primary: #f0f6fc;
+      --text-secondary: #7d8590;
+      --accent: #4285f4;
+      --accent-hover: #5a9bff;
+      --border: #30363d;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 16px 24px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-btn {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .header-btn:hover {
+      background: var(--border);
+      transform: translateY(-1px);
+    }
+
+    .status {
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #00d084;
+      border-radius: 50%;
+    }
+
+    .chat-container {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message.bot {
+      align-self: flex-start;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .message.user .avatar {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    }
+
+    .message.bot .avatar {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+    }
+
+    .bubble {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .message.user .bubble {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      border: none;
+      color: white;
+    }
+
+    .bubble p { margin-bottom: 8px; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble code {
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .bubble pre {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      overflow-x: auto;
+      margin: 8px 0;
+    }
+    .bubble pre code {
+      background: none;
+      padding: 0;
+    }
+
+    .typing {
+      display: none;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 80px;
+    }
+
+    .typing.visible {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30% { transform: translateY(-8px); opacity: 1; }
+    }
+
+    .input-area {
+      padding: 20px 24px;
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .input-box {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      gap: 12px;
+      background: var(--bg-elevated);
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      padding: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .input-box:focus-within {
+      border-color: var(--accent);
+    }
+
+    input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-size: 15px;
+    }
+
+    input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    button {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+      transform: scale(1.05);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    button svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🤖 ChatBot</h1>
+    <div class="header-actions">
+      <div class="user-info" id="user-info" style="display: none;">
+        <span id="username-display"></span>
+        <button class="header-btn" id="analytics-btn" title="View Analytics">📊</button>
+        <button class="header-btn" id="logout-btn" title="Logout">🚪</button>
+      </div>
+      <button class="header-btn" id="login-btn">👤 Login</button>
+      <div class="status" id="status">LLaMA 3.3 70B — Groq</div>
+    </div>
+  </div>
+
+  <div class="chat-container">
+    <div class="messages" id="messages">
+      <div class="message bot">
+        <div class="avatar">🤖</div>
+        <div class="bubble">
+          <strong>Hey there! 👋</strong><br>
+          I'm ChatBot, powered by Groq's LLaMA 3.3 70B. Ask me anything!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-box">
+      <input 
+        type="text" 
+        id="input" 
+        placeholder="Message ChatBot..." 
+        autocomplete="off"
+      />
+      <button id="send">
+        <svg viewBox="0 0 24 24">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    marked.setOptions({
+      breaks: true,
+      highlight: (code, lang) => {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
+      }
+    });
+
+    const messages = document.getElementById('messages');
+    const input = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+    const status = document.getElementById('status');
+    const userInfo = document.getElementById('user-info');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const analyticsBtn = document.getElementById('analytics-btn');
+    const usernameDisplay = document.getElementById('username-display');
+    
+    let sessionId = null;
+    let apiKey = localStorage.getItem('chatbot_api_key');
+    let currentUser = null;
+
+    // Check authentication status
+    function checkAuth() {
+      const user = localStorage.getItem('chatbot_user');
+      if (apiKey && user) {
+        currentUser = JSON.parse(user);
+        userInfo.style.display = 'flex';
+        loginBtn.style.display = 'none';
+        usernameDisplay.textContent = `👋 ${currentUser.username}`;
+      } else {
+        userInfo.style.display = 'none';
+        loginBtn.style.display = 'block';
+      }
+    }
+
+    // Authentication event listeners
+    loginBtn.addEventListener('click', () => {
+      window.location.href = '/auth';
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('chatbot_api_key');
+      localStorage.removeItem('chatbot_user');
+      apiKey = null;
+      currentUser = null;
+      sessionId = null;
+      checkAuth();
+      // Clear messages
+      messages.innerHTML = `
+        <div class="message bot">
+          <div class="avatar">🤖</div>
+          <div class="bubble">
+            <strong>Hey there! 👋</strong><br>
+            I'm ChatBot, powered by Groq's LLaMA 3.3 70B. Ask me anything!
+          </div>
+        </div>
+      `;
+    });
+
+    analyticsBtn.addEventListener('click', () => {
+      window.location.href = '/analytics';
+    });
+
+    // Initialize auth status
+    checkAuth();
+
+    function addMessage(text, isUser) {
+      const msg = document.createElement('div');
+      msg.className = `message ${isUser ? 'user' : 'bot'}`;
+      
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.textContent = isUser ? '👤' : '🤖';
+      
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      
+      if (isUser) {
+        bubble.textContent = text;
+      } else {
+        bubble.innerHTML = marked.parse(text);
+        bubble.querySelectorAll('pre code').forEach(block => {
+          hljs.highlightElement(block);
+        });
+      }
+      
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showTyping() {
+      const typing = document.createElement('div');
+      typing.id = 'typing';
+      typing.className = 'typing visible';
+      typing.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+      messages.appendChild(typing);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function hideTyping() {
+      const typing = document.getElementById('typing');
+      if (typing) typing.remove();
+    }
+
+    async function send() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      sendBtn.disabled = true;
+      status.textContent = 'Thinking...';
+      
+      addMessage(text, true);
+      showTyping();
+
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (apiKey) {
+          headers['Authorization'] = `Bearer ${apiKey}`;
+        }
+
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ 
+            message: text, 
+            session_id: sessionId 
+          })
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        
+        const data = await res.json();
+        sessionId = data.session_id;
+        
+        hideTyping();
+        addMessage(data.reply, false);
+
+      } catch (err) {
+        hideTyping();
+        addMessage(`❌ Error: ${err.message}`, false);
+        console.error(err);
+      } finally {
+        sendBtn.disabled = false;
+        status.textContent = 'LLaMA 3.3 70B — Groq';
+        input.focus();
+      }
+    }
+
+    sendBtn.onclick = send;
+    input.onkeydown = (e) => { 
+      if (e.key === 'Enter') send(); 
+    };
+    input.focus();
+  </script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot - Authentication</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-surface: #161b22;
+            --bg-elevated: #21262d;
+            --text-primary: #f0f6fc;
+            --text-secondary: #7d8590;
+            --accent: #4285f4;
+            --accent-hover: #5a9bff;
+            --border: #30363d;
+            --error: #ff6b6b;
+            --success: #00d084;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 16px;
+        }
+
+        .auth-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .auth-form {
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .form-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .form-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .form-btn:active {
+            transform: translateY(0);
+        }
+
+        .form-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-switch {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .auth-switch button {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 14px;
+        }
+
+        .auth-switch button:hover {
+            color: var(--accent-hover);
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .message.error {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .message.success {
+            background: rgba(0, 208, 132, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.visible {
+            display: block;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .api-key-display {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: var(--text-primary);
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--border);
+        }
+
+        .continue-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 16px;
+            transition: all 0.2s;
+        }
+
+        .continue-btn:hover {
+            background: #00b56a;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="logo">🤖</div>
+            <h1 id="auth-title">Welcome to ChatBot</h1>
+            <p id="auth-subtitle">Sign in to continue or create a new account</p>
+        </div>
+
+        <div id="message-container"></div>
+        
+        <form class="auth-form" id="auth-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group" id="email-group" style="display: none;">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="form-btn" id="auth-btn">Sign In</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <span>Processing...</span>
+        </div>
+
+        <div class="auth-switch">
+            <span id="switch-text">Don't have an account?</span>
+            <button type="button" id="switch-btn">Sign Up</button>
+        </div>
+
+        <!-- Success screen for registration -->
+        <div id="success-screen" class="hidden">
+            <div class="auth-header">
+                <h1>Account Created!</h1>
+                <p>Your API key has been generated</p>
+            </div>
+            
+            <div class="api-key-display" id="api-key-display"></div>
+            <button class="copy-btn" id="copy-key-btn">Copy API Key</button>
+            
+            <div class="message">
+                <strong>Important:</strong> Save this API key securely. You'll need it to access the ChatBot API.
+            </div>
+            
+            <button class="continue-btn" id="continue-btn">Continue to Chat</button>
+        </div>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+        
+        const authTitle = document.getElementById('auth-title');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        const authForm = document.getElementById('auth-form');
+        const authBtn = document.getElementById('auth-btn');
+        const switchText = document.getElementById('switch-text');
+        const switchBtn = document.getElementById('switch-btn');
+        const emailGroup = document.getElementById('email-group');
+        const messageContainer = document.getElementById('message-container');
+        const loading = document.getElementById('loading');
+        const successScreen = document.getElementById('success-screen');
+
+        function showMessage(message, type = 'error') {
+            messageContainer.innerHTML = `<div class="message ${type}">${message}</div>`;
+        }
+
+        function hideMessage() {
+            messageContainer.innerHTML = '';
+        }
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            
+            if (isLoginMode) {
+                authTitle.textContent = 'Welcome Back';
+                authSubtitle.textContent = 'Sign in to continue';
+                authBtn.textContent = 'Sign In';
+                switchText.textContent = "Don't have an account?";
+                switchBtn.textContent = 'Sign Up';
+                emailGroup.style.display = 'none';
+                document.getElementById('email').removeAttribute('required');
+            } else {
+                authTitle.textContent = 'Create Account';
+                authSubtitle.textContent = 'Join ChatBot to get started';
+                authBtn.textContent = 'Create Account';
+                switchText.textContent = 'Already have an account?';
+                switchBtn.textContent = 'Sign In';
+                emailGroup.style.display = 'block';
+                document.getElementById('email').setAttribute('required', 'required');
+            }
+            
+            hideMessage();
+            authForm.reset();
+        }
+
+        function setLoading(show) {
+            if (show) {
+                loading.classList.add('visible');
+                authBtn.disabled = true;
+            } else {
+                loading.classList.remove('visible');
+                authBtn.disabled = false;
+            }
+        }
+
+        function showSuccessScreen(apiKey) {
+            authForm.parentElement.style.display = 'none';
+            successScreen.classList.remove('hidden');
+            document.getElementById('api-key-display').textContent = apiKey;
+        }
+
+        switchBtn.addEventListener('click', toggleMode);
+
+        document.getElementById('copy-key-btn').addEventListener('click', () => {
+            const apiKey = document.getElementById('api-key-display').textContent;
+            navigator.clipboard.writeText(apiKey).then(() => {
+                showMessage('API key copied to clipboard!', 'success');
+            });
+        });
+
+        document.getElementById('continue-btn').addEventListener('click', () => {
+            window.location.href = '/';
+        });
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(authForm);
+            const data = {
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
+            
+            if (!isLoginMode) {
+                data.email = formData.get('email');
+            }
+            
+            setLoading(true);
+            hideMessage();
+            
+            try {
+                const endpoint = isLoginMode ? '/api/login' : '/api/register';
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    if (isLoginMode) {
+                        // Store API key and redirect
+                        localStorage.setItem('chatbot_api_key', result.api_key);
+                        localStorage.setItem('chatbot_user', JSON.stringify(result.user));
+                        showMessage('Login successful! Redirecting...', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1000);
+                    } else {
+                        // Show registration success with API key
+                        showSuccessScreen(result.api_key);
+                        localStorage.setItem('chatbot_api_key', result.api_key);
+                    }
+                } else {
+                    showMessage(result.error || 'An error occurred');
+                }
+            } catch (error) {
+                showMessage('Network error. Please try again.');
+                console.error('Auth error:', error);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Check if user is already logged in
+        const existingApiKey = localStorage.getItem('chatbot_api_key');
+        if (existingApiKey) {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
