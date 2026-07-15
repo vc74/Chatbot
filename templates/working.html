@@ -73,6 +73,451 @@
       transform: translateY(-1px);
     }
 
+    .voice-btn {
+      position: relative;
+    }
+
+    .voice-btn.listening {
+      background: var(--accent) !important;
+      color: white !important;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(66, 133, 244, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
+    }
+
+    /* Voice Controls Panel */
+    .voice-panel {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      width: 400px;
+      height: 100vh;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border);
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      overflow-y: auto;
+      box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .voice-panel.open {
+      right: 0;
+    }
+
+    .voice-panel-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-elevated);
+      position: sticky;
+      top: 0;
+    }
+
+    .voice-panel-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .close-panel {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .close-panel:hover {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .voice-settings {
+      padding: 20px;
+    }
+
+    .voice-setting {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 12px 0;
+    }
+
+    .voice-setting label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .voice-setting-description {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border);
+      transition: 0.3s;
+      border-radius: 12px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Range Input */
+    input[type="range"] {
+      width: 100px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+    }
+
+    .range-value {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-left: 8px;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* Select */
+    select {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-size: 14px;
+      min-width: 160px;
+      cursor: pointer;
+    }
+
+    select option {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    /* Voice Commands List */
+    .voice-commands {
+      border-top: 1px solid var(--border);
+      padding: 20px;
+    }
+
+    .voice-commands h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .command-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .command-item {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .command-trigger {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .command-description {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Voice Status Indicator */
+    .voice-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      min-width: 200px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      display: none;
+      z-index: 1500;
+    }
+
+    .voice-status.visible {
+      display: block;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .voice-status-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .voice-status-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .voice-status-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .voice-level {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .voice-level-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.1s;
+    }
+
+    .voice-transcript {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+      min-height: 16px;
+    }
+
+    /* Voice Overlay */
+    .voice-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(13, 17, 23, 0.95);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 2000;
+    }
+
+    .voice-overlay.visible {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .voice-visualizer {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .voice-wave {
+      width: 8px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 4px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+
+    .voice-wave:nth-child(1) { animation-delay: 0s; }
+    .voice-wave:nth-child(2) { animation-delay: 0.1s; }
+    .voice-wave:nth-child(3) { animation-delay: 0.2s; }
+    .voice-wave:nth-child(4) { animation-delay: 0.3s; }
+    .voice-wave:nth-child(5) { animation-delay: 0.4s; }
+    .voice-wave:nth-child(6) { animation-delay: 0.5s; }
+    .voice-wave:nth-child(7) { animation-delay: 0.6s; }
+
+    @keyframes wave {
+      0%, 100% { height: 20px; opacity: 0.3; }
+      50% { height: 80px; opacity: 1; }
+    }
+
+    .voice-overlay-content {
+      text-align: center;
+      color: white;
+    }
+
+    .voice-overlay-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .voice-overlay-subtitle {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 20px;
+    }
+
+    .voice-overlay-transcript {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px 20px;
+      margin: 20px 0;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-style: italic;
+      min-width: 300px;
+    }
+
+    .voice-overlay-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .voice-action-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      padding: 12px 20px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .voice-action-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .voice-action-btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .voice-action-btn.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .voice-panel {
+        width: 100vw;
+        right: -100vw;
+      }
+
+      .voice-status {
+        bottom: 80px;
+        left: 16px;
+        right: 16px;
+        min-width: auto;
+      }
+
+      .voice-overlay-transcript {
+        min-width: 280px;
+        margin: 20px 16px;
+      }
+
+      .voice-overlay-actions {
+        flex-direction: column;
+        width: 200px;
+      }
+    }
+
     .status {
       font-size: 14px;
       color: var(--text-secondary);
@@ -290,6 +735,8 @@
         <button class="header-btn" id="analytics-btn" title="View Analytics">📊</button>
         <button class="header-btn" id="logout-btn" title="Logout">🚪</button>
       </div>
+      <button class="header-btn voice-btn" id="voice-btn" title="Voice Input">🎤</button>
+      <button class="header-btn" id="voice-settings-btn" title="Voice Settings">⚙️</button>
       <button class="header-btn" id="login-btn">👤 Login</button>
       <div class="status" id="status">LLaMA 3.3 70B — Groq</div>
     </div>
@@ -312,7 +759,7 @@
       <input 
         type="text" 
         id="input" 
-        placeholder="Message ChatBot..." 
+        placeholder="Message ChatBot... (Press 🎤 for voice or type your message)" 
         autocomplete="off"
       />
       <button id="send">
@@ -320,6 +767,184 @@
           <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
         </svg>
       </button>
+    </div>
+  </div>
+
+  <!-- Voice Controls Panel -->
+  <div class="voice-panel" id="voice-panel">
+    <div class="voice-panel-header">
+      <h3>🎤 Voice Assistant</h3>
+      <button class="close-panel" id="close-voice-panel">×</button>
+    </div>
+    
+    <div class="voice-settings">
+      <div class="voice-setting">
+        <div>
+          <label>Auto Speech Response</label>
+          <div class="voice-setting-description">Automatically speak bot responses</div>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="auto-speech-toggle" checked>
+          <span class="slider"></span>
+        </div>
+      </div>
+      
+      <div class="voice-setting">
+        <div>
+          <label>Wake Word Detection</label>
+          <div class="voice-setting-description">Listen for "Hey ChatBot"</div>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="wake-word-toggle">
+          <span class="slider"></span>
+        </div>
+      </div>
+      
+      <div class="voice-setting">
+        <div>
+          <label>Voice Commands</label>
+          <div class="voice-setting-description">Enable voice control commands</div>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="voice-commands-toggle" checked>
+          <span class="slider"></span>
+        </div>
+      </div>
+      
+      <div class="voice-setting">
+        <label>Speech Speed</label>
+        <div style="display: flex; align-items: center;">
+          <input type="range" id="speech-rate" min="0.5" max="2" value="1" step="0.1">
+          <span class="range-value" id="speech-rate-value">1.0x</span>
+        </div>
+      </div>
+      
+      <div class="voice-setting">
+        <label>Speech Pitch</label>
+        <div style="display: flex; align-items: center;">
+          <input type="range" id="speech-pitch" min="0" max="2" value="1" step="0.1">
+          <span class="range-value" id="speech-pitch-value">1.0</span>
+        </div>
+      </div>
+      
+      <div class="voice-setting">
+        <label>Speech Volume</label>
+        <div style="display: flex; align-items: center;">
+          <input type="range" id="speech-volume" min="0" max="1" value="1" step="0.1">
+          <span class="range-value" id="speech-volume-value">100%</span>
+        </div>
+      </div>
+      
+      <div class="voice-setting">
+        <label>Voice Type</label>
+        <select id="voice-select">
+          <option value="">Loading voices...</option>
+        </select>
+      </div>
+      
+      <div class="voice-setting">
+        <label>Language</label>
+        <select id="language-select">
+          <option value="en-US">English (US)</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="en-AU">English (Australia)</option>
+          <option value="en-CA">English (Canada)</option>
+          <option value="es-ES">Spanish (Spain)</option>
+          <option value="es-MX">Spanish (Mexico)</option>
+          <option value="fr-FR">French (France)</option>
+          <option value="fr-CA">French (Canada)</option>
+          <option value="de-DE">German</option>
+          <option value="it-IT">Italian</option>
+          <option value="pt-BR">Portuguese (Brazil)</option>
+          <option value="pt-PT">Portuguese (Portugal)</option>
+          <option value="ru-RU">Russian</option>
+          <option value="ja-JP">Japanese</option>
+          <option value="ko-KR">Korean</option>
+          <option value="zh-CN">Chinese (Simplified)</option>
+          <option value="zh-TW">Chinese (Traditional)</option>
+          <option value="ar-SA">Arabic</option>
+          <option value="hi-IN">Hindi</option>
+          <option value="nl-NL">Dutch</option>
+          <option value="sv-SE">Swedish</option>
+          <option value="da-DK">Danish</option>
+          <option value="no-NO">Norwegian</option>
+          <option value="fi-FI">Finnish</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="voice-commands">
+      <h4>🎯 Voice Commands</h4>
+      <div class="command-grid">
+        <div class="command-item">
+          <div class="command-trigger">"Hey ChatBot [question]"</div>
+          <div class="command-description">Wake word activation</div>
+        </div>
+        <div class="command-item">
+          <div class="command-trigger">"Clear chat" / "New conversation"</div>
+          <div class="command-description">Start a new chat session</div>
+        </div>
+        <div class="command-item">
+          <div class="command-trigger">"Stop speaking" / "Stop"</div>
+          <div class="command-description">Cancel current speech</div>
+        </div>
+        <div class="command-item">
+          <div class="command-trigger">"Repeat that" / "Say again"</div>
+          <div class="command-description">Repeat last response</div>
+        </div>
+        <div class="command-item">
+          <div class="command-trigger">"Send message" / "Send"</div>
+          <div class="command-description">Send typed message</div>
+        </div>
+        <div class="command-item">
+          <div class="command-trigger">"Louder" / "Quieter"</div>
+          <div class="command-description">Adjust speech volume</div>
+        </div>
+        <div class="command-item">
+          <div class="command-trigger">"Faster" / "Slower"</div>
+          <div class="command-description">Adjust speech speed</div>
+        </div>
+        <div class="command-item">
+          <div class="command-trigger">"Switch voice"</div>
+          <div class="command-description">Change to next available voice</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice Status Indicator -->
+  <div class="voice-status" id="voice-status">
+    <div class="voice-status-header">
+      <span class="voice-status-title">🎤 Listening...</span>
+      <button class="voice-status-close" id="voice-status-close">×</button>
+    </div>
+    <div class="voice-level">
+      <div class="voice-level-fill" id="voice-level-fill"></div>
+    </div>
+    <div class="voice-transcript" id="voice-transcript">Say something...</div>
+  </div>
+
+  <!-- Voice Overlay -->
+  <div class="voice-overlay" id="voice-overlay">
+    <div class="voice-visualizer" id="voice-visualizer">
+      <div class="voice-wave"></div>
+      <div class="voice-wave"></div>
+      <div class="voice-wave"></div>
+      <div class="voice-wave"></div>
+      <div class="voice-wave"></div>
+      <div class="voice-wave"></div>
+      <div class="voice-wave"></div>
+    </div>
+    
+    <div class="voice-overlay-content">
+      <div class="voice-overlay-title" id="voice-overlay-title">Listening...</div>
+      <div class="voice-overlay-subtitle" id="voice-overlay-subtitle">Speak clearly into your microphone</div>
+      <div class="voice-overlay-transcript" id="voice-overlay-transcript">...</div>
+      
+      <div class="voice-overlay-actions">
+        <button class="voice-action-btn" id="voice-cancel">Cancel</button>
+        <button class="voice-action-btn primary" id="voice-send">Send Message</button>
+      </div>
     </div>
   </div>
 
@@ -344,9 +969,566 @@
     const analyticsBtn = document.getElementById('analytics-btn');
     const usernameDisplay = document.getElementById('username-display');
     
+    // Voice elements
+    const voiceBtn = document.getElementById('voice-btn');
+    const voiceSettingsBtn = document.getElementById('voice-settings-btn');
+    const voicePanel = document.getElementById('voice-panel');
+    const closeVoicePanel = document.getElementById('close-voice-panel');
+    const voiceStatus = document.getElementById('voice-status');
+    const voiceOverlay = document.getElementById('voice-overlay');
+    
     let sessionId = null;
     let apiKey = localStorage.getItem('chatbot_api_key');
     let currentUser = null;
+
+    // Voice Assistant Setup
+    let recognition = null;
+    let synthesis = window.speechSynthesis;
+    let isListening = false;
+    let isWakeWordActive = false;
+    let currentUtterance = null;
+    let availableVoices = [];
+    let lastResponse = '';
+    
+    // Voice settings
+    let voiceSettings = {
+      autoSpeech: true,
+      wakeWord: false,
+      voiceCommands: true,
+      speechRate: 1.0,
+      speechPitch: 1.0,
+      speechVolume: 1.0,
+      selectedVoice: '',
+      language: 'en-US'
+    };
+
+    // Load voice settings from localStorage
+    function loadVoiceSettings() {
+      const saved = localStorage.getItem('chatbot_voice_settings');
+      if (saved) {
+        voiceSettings = { ...voiceSettings, ...JSON.parse(saved) };
+      }
+    }
+
+    // Save voice settings to localStorage
+    function saveVoiceSettings() {
+      localStorage.setItem('chatbot_voice_settings', JSON.stringify(voiceSettings));
+    }
+
+    // Initialize Speech Recognition
+    function initializeSpeechRecognition() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        console.warn('Speech recognition not supported');
+        voiceBtn.style.display = 'none';
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = voiceSettings.language;
+
+      recognition.onstart = () => {
+        isListening = true;
+        voiceBtn.classList.add('listening');
+        showVoiceStatus('🎤 Listening...', 'Speak clearly into your microphone');
+      };
+
+      recognition.onresult = (event) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+
+        const currentTranscript = finalTranscript || interimTranscript;
+        updateVoiceTranscript(currentTranscript);
+
+        if (finalTranscript) {
+          processVoiceInput(finalTranscript.trim());
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        stopListening();
+        showMessage('Voice recognition error: ' + event.error, false);
+      };
+
+      recognition.onend = () => {
+        if (isWakeWordActive && !isListening) {
+          // Restart recognition for wake word detection
+          setTimeout(() => {
+            if (isWakeWordActive) {
+              startListening(true);
+            }
+          }, 100);
+        }
+      };
+    }
+
+    // Load available voices
+    function loadVoices() {
+      availableVoices = synthesis.getVoices();
+      const voiceSelect = document.getElementById('voice-select');
+      
+      if (availableVoices.length === 0) {
+        setTimeout(loadVoices, 100);
+        return;
+      }
+
+      voiceSelect.innerHTML = '<option value="">Default System Voice</option>';
+      
+      // Group voices by language
+      const voicesByLang = {};
+      availableVoices.forEach((voice, index) => {
+        const lang = voice.lang.split('-')[0];
+        if (!voicesByLang[lang]) voicesByLang[lang] = [];
+        voicesByLang[lang].push({ voice, index });
+      });
+
+      // Add voices to select
+      Object.keys(voicesByLang).sort().forEach(lang => {
+        const group = document.createElement('optgroup');
+        group.label = getLanguageName(lang);
+        
+        voicesByLang[lang].forEach(({ voice, index }) => {
+          const option = document.createElement('option');
+          option.value = index;
+          option.textContent = `${voice.name} (${voice.lang})`;
+          group.appendChild(option);
+        });
+        
+        voiceSelect.appendChild(group);
+      });
+
+      // Set saved voice
+      if (voiceSettings.selectedVoice) {
+        voiceSelect.value = voiceSettings.selectedVoice;
+      }
+    }
+
+    // Get language display name
+    function getLanguageName(code) {
+      const names = {
+        'en': 'English',
+        'es': 'Spanish', 
+        'fr': 'French',
+        'de': 'German',
+        'it': 'Italian',
+        'pt': 'Portuguese',
+        'ru': 'Russian',
+        'ja': 'Japanese',
+        'ko': 'Korean',
+        'zh': 'Chinese',
+        'ar': 'Arabic',
+        'hi': 'Hindi',
+        'nl': 'Dutch',
+        'sv': 'Swedish',
+        'da': 'Danish',
+        'no': 'Norwegian',
+        'fi': 'Finnish'
+      };
+      return names[code] || code.toUpperCase();
+    }
+
+    // Start listening
+    function startListening(wakeWordMode = false) {
+      if (!recognition) return;
+      
+      try {
+        isListening = true;
+        isWakeWordActive = wakeWordMode;
+        recognition.lang = voiceSettings.language;
+        recognition.start();
+        
+        if (!wakeWordMode) {
+          showVoiceOverlay();
+        }
+      } catch (error) {
+        console.error('Error starting recognition:', error);
+        isListening = false;
+      }
+    }
+
+    // Stop listening
+    function stopListening() {
+      if (recognition && isListening) {
+        isListening = false;
+        isWakeWordActive = false;
+        recognition.stop();
+        voiceBtn.classList.remove('listening');
+        hideVoiceStatus();
+        hideVoiceOverlay();
+      }
+    }
+
+    // Process voice input
+    function processVoiceInput(text) {
+      console.log('Voice input:', text);
+      
+      // Check for wake word
+      if (isWakeWordActive) {
+        const wakeWordPattern = /(hey chatbot|ok chatbot|chatbot)/i;
+        if (wakeWordPattern.test(text)) {
+          const command = text.replace(wakeWordPattern, '').trim();
+          if (command) {
+            input.value = command;
+            stopListening();
+            send();
+            return;
+          }
+        }
+        // Don't process other commands in wake word mode
+        return;
+      }
+
+      // Check for voice commands
+      if (voiceSettings.voiceCommands && processVoiceCommand(text)) {
+        stopListening();
+        return;
+      }
+
+      // Regular voice input
+      input.value = text;
+      stopListening();
+      
+      // Auto-send if it's a complete sentence
+      if (text.length > 3 && (text.endsWith('.') || text.endsWith('?') || text.endsWith('!'))) {
+        setTimeout(send, 500);
+      }
+    }
+
+    // Process voice commands
+    function processVoiceCommand(text) {
+      const command = text.toLowerCase().trim();
+      
+      if (command.includes('clear chat') || command.includes('new conversation') || command.includes('start over')) {
+        clearChat();
+        speak('Starting a new conversation.');
+        return true;
+      }
+      
+      if (command.includes('stop speaking') || command === 'stop' || command === 'quiet') {
+        stopSpeaking();
+        return true;
+      }
+      
+      if (command.includes('repeat that') || command.includes('say again') || command.includes('repeat')) {
+        if (lastResponse) {
+          speak(lastResponse);
+        }
+        return true;
+      }
+      
+      if (command.includes('send message') || command === 'send') {
+        if (input.value.trim()) {
+          send();
+        }
+        return true;
+      }
+      
+      if (command.includes('louder')) {
+        voiceSettings.speechVolume = Math.min(1.0, voiceSettings.speechVolume + 0.2);
+        updateVolumeSlider();
+        speak('Volume increased');
+        return true;
+      }
+      
+      if (command.includes('quieter') || command.includes('softer')) {
+        voiceSettings.speechVolume = Math.max(0.1, voiceSettings.speechVolume - 0.2);
+        updateVolumeSlider();
+        speak('Volume decreased');
+        return true;
+      }
+      
+      if (command.includes('faster')) {
+        voiceSettings.speechRate = Math.min(2.0, voiceSettings.speechRate + 0.2);
+        updateRateSlider();
+        speak('Speech speed increased');
+        return true;
+      }
+      
+      if (command.includes('slower')) {
+        voiceSettings.speechRate = Math.max(0.5, voiceSettings.speechRate - 0.2);
+        updateRateSlider();
+        speak('Speech speed decreased');
+        return true;
+      }
+      
+      if (command.includes('switch voice') || command.includes('change voice')) {
+        switchToNextVoice();
+        return true;
+      }
+      
+      return false;
+    }
+
+    // Text-to-speech
+    function speak(text) {
+      if (!synthesis || !text) return;
+      
+      stopSpeaking();
+      
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      
+      // Apply voice settings
+      currentUtterance.rate = voiceSettings.speechRate;
+      currentUtterance.pitch = voiceSettings.speechPitch;
+      currentUtterance.volume = voiceSettings.speechVolume;
+      currentUtterance.lang = voiceSettings.language;
+      
+      // Set voice if selected
+      if (voiceSettings.selectedVoice && availableVoices[voiceSettings.selectedVoice]) {
+        currentUtterance.voice = availableVoices[voiceSettings.selectedVoice];
+      }
+      
+      lastResponse = text;
+      synthesis.speak(currentUtterance);
+    }
+
+    // Stop speaking
+    function stopSpeaking() {
+      if (synthesis && synthesis.speaking) {
+        synthesis.cancel();
+      }
+      currentUtterance = null;
+    }
+
+    // Show voice status indicator
+    function showVoiceStatus(title, subtitle = '') {
+      document.getElementById('voice-status-title').textContent = title;
+      voiceStatus.classList.add('visible');
+      
+      if (subtitle) {
+        const subtitleEl = voiceStatus.querySelector('.voice-subtitle');
+        if (subtitleEl) {
+          subtitleEl.textContent = subtitle;
+        }
+      }
+    }
+
+    // Hide voice status
+    function hideVoiceStatus() {
+      voiceStatus.classList.remove('visible');
+    }
+
+    // Show voice overlay
+    function showVoiceOverlay() {
+      document.getElementById('voice-overlay-transcript').textContent = '...';
+      voiceOverlay.classList.add('visible');
+    }
+
+    // Hide voice overlay
+    function hideVoiceOverlay() {
+      voiceOverlay.classList.remove('visible');
+    }
+
+    // Update voice transcript in overlay
+    function updateVoiceTranscript(text) {
+      const transcriptEl = document.getElementById('voice-transcript');
+      const overlayTranscriptEl = document.getElementById('voice-overlay-transcript');
+      
+      if (transcriptEl) transcriptEl.textContent = text || 'Say something...';
+      if (overlayTranscriptEl) overlayTranscriptEl.textContent = text || '...';
+    }
+
+    // Clear chat
+    function clearChat() {
+      sessionId = null;
+      messages.innerHTML = `
+        <div class="message bot">
+          <div class="avatar">🤖</div>
+          <div class="bubble">
+            <strong>Hey there! 👋</strong><br>
+            I'm ChatBot, powered by Groq's LLaMA 3.3 70B. Ask me anything!
+          </div>
+        </div>
+      `;
+    }
+
+    // Switch to next available voice
+    function switchToNextVoice() {
+      if (availableVoices.length === 0) return;
+      
+      const currentIndex = parseInt(voiceSettings.selectedVoice) || 0;
+      const nextIndex = (currentIndex + 1) % availableVoices.length;
+      
+      voiceSettings.selectedVoice = nextIndex.toString();
+      document.getElementById('voice-select').value = voiceSettings.selectedVoice;
+      saveVoiceSettings();
+      
+      const nextVoice = availableVoices[nextIndex];
+      speak(`Switched to ${nextVoice.name}`);
+    }
+
+    // Update slider displays
+    function updateRateSlider() {
+      document.getElementById('speech-rate').value = voiceSettings.speechRate;
+      document.getElementById('speech-rate-value').textContent = voiceSettings.speechRate.toFixed(1) + 'x';
+      saveVoiceSettings();
+    }
+
+    function updatePitchSlider() {
+      document.getElementById('speech-pitch').value = voiceSettings.speechPitch;
+      document.getElementById('speech-pitch-value').textContent = voiceSettings.speechPitch.toFixed(1);
+      saveVoiceSettings();
+    }
+
+    function updateVolumeSlider() {
+      document.getElementById('speech-volume').value = voiceSettings.speechVolume;
+      document.getElementById('speech-volume-value').textContent = Math.round(voiceSettings.speechVolume * 100) + '%';
+      saveVoiceSettings();
+    }
+
+    // Initialize voice settings UI
+    function initializeVoiceUI() {
+      // Load settings
+      loadVoiceSettings();
+      
+      // Set toggle states
+      document.getElementById('auto-speech-toggle').checked = voiceSettings.autoSpeech;
+      document.getElementById('wake-word-toggle').checked = voiceSettings.wakeWord;
+      document.getElementById('voice-commands-toggle').checked = voiceSettings.voiceCommands;
+      
+      // Set sliders
+      updateRateSlider();
+      updatePitchSlider();
+      updateVolumeSlider();
+      
+      // Set language
+      document.getElementById('language-select').value = voiceSettings.language;
+      
+      // Event listeners for settings
+      document.getElementById('auto-speech-toggle').onchange = (e) => {
+        voiceSettings.autoSpeech = e.target.checked;
+        saveVoiceSettings();
+      };
+      
+      document.getElementById('wake-word-toggle').onchange = (e) => {
+        voiceSettings.wakeWord = e.target.checked;
+        saveVoiceSettings();
+        
+        if (voiceSettings.wakeWord) {
+          startListening(true);
+          showMessage('Wake word detection enabled. Say "Hey ChatBot" followed by your question.', false);
+        } else {
+          stopListening();
+        }
+      };
+      
+      document.getElementById('voice-commands-toggle').onchange = (e) => {
+        voiceSettings.voiceCommands = e.target.checked;
+        saveVoiceSettings();
+      };
+      
+      document.getElementById('speech-rate').oninput = (e) => {
+        voiceSettings.speechRate = parseFloat(e.target.value);
+        updateRateSlider();
+      };
+      
+      document.getElementById('speech-pitch').oninput = (e) => {
+        voiceSettings.speechPitch = parseFloat(e.target.value);
+        updatePitchSlider();
+      };
+      
+      document.getElementById('speech-volume').oninput = (e) => {
+        voiceSettings.speechVolume = parseFloat(e.target.value);
+        updateVolumeSlider();
+      };
+      
+      document.getElementById('voice-select').onchange = (e) => {
+        voiceSettings.selectedVoice = e.target.value;
+        saveVoiceSettings();
+        
+        if (e.target.value) {
+          const voice = availableVoices[e.target.value];
+          speak(`Voice changed to ${voice.name}`);
+        }
+      };
+      
+      document.getElementById('language-select').onchange = (e) => {
+        voiceSettings.language = e.target.value;
+        saveVoiceSettings();
+        
+        if (recognition) {
+          recognition.lang = voiceSettings.language;
+        }
+        
+        speak('Language updated');
+      };
+    }
+
+    // Voice event listeners
+    voiceBtn.addEventListener('click', () => {
+      if (isListening) {
+        stopListening();
+      } else {
+        startListening();
+      }
+    });
+
+    voiceSettingsBtn.addEventListener('click', () => {
+      voicePanel.classList.add('open');
+    });
+
+    closeVoicePanel.addEventListener('click', () => {
+      voicePanel.classList.remove('open');
+    });
+
+    document.getElementById('voice-status-close').addEventListener('click', hideVoiceStatus);
+    document.getElementById('voice-cancel').addEventListener('click', () => {
+      stopListening();
+      hideVoiceOverlay();
+    });
+
+    document.getElementById('voice-send').addEventListener('click', () => {
+      const text = document.getElementById('voice-overlay-transcript').textContent;
+      if (text && text !== '...') {
+        input.value = text;
+        stopListening();
+        hideVoiceOverlay();
+        send();
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + M for voice input
+      if ((e.ctrlKey || e.metaKey) && e.key === 'm') {
+        e.preventDefault();
+        voiceBtn.click();
+      }
+      
+      // Escape to close panels/stop listening
+      if (e.key === 'Escape') {
+        voicePanel.classList.remove('open');
+        stopListening();
+        hideVoiceOverlay();
+      }
+    });
+
+    // Initialize voice system
+    function initializeVoice() {
+      initializeSpeechRecognition();
+      
+      // Load voices when available
+      if (synthesis.getVoices().length > 0) {
+        loadVoices();
+      } else {
+        synthesis.onvoiceschanged = loadVoices;
+      }
+      
+      initializeVoiceUI();
+    }
 
     // Check authentication status
     function checkAuth() {
@@ -466,6 +1648,21 @@
         
         hideTyping();
         addMessage(data.reply, false);
+        
+        // Auto-speak response if enabled
+        if (voiceSettings.autoSpeech && data.reply) {
+          // Remove markdown formatting for speech
+          const cleanText = data.reply
+            .replace(/\*\*(.*?)\*\*/g, '$1')
+            .replace(/\*(.*?)\*/g, '$1')
+            .replace(/`(.*?)`/g, '$1')
+            .replace(/#{1,6}\s*(.*)/g, '$1')
+            .replace(/\[.*?\]\(.*?\)/g, '')
+            .replace(/```[\s\S]*?```/g, 'code block')
+            .replace(/\n+/g, '. ');
+          
+          speak(cleanText);
+        }
 
       } catch (err) {
         hideTyping();
@@ -480,8 +1677,18 @@
 
     sendBtn.onclick = send;
     input.onkeydown = (e) => { 
-      if (e.key === 'Enter') send(); 
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        send();
+      }
     };
+
+    // Initialize auth status
+    checkAuth();
+
+    // Initialize voice system
+    initializeVoice();
+    
     input.focus();
   </script>
 </body>
