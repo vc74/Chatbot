@@ -11,8 +11,5 @@
       "src": "/(.*)",
       "dest": "server.py"
     }
-  ],
-  "env": {
-    "GROQ_API_KEY": "@groq_api_key"
-  }
+  ]
 }
