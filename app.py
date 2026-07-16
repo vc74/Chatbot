@@ -77,7 +77,12 @@ def update_chat_title(session_id, first_message):
 
 @app.route("/")
 def index():
-    logger.info("Main page accessed")
+    logger.info("Homepage accessed")
+    return render_template("home.html")
+
+@app.route("/chat")
+def chat_page():
+    logger.info("Chat page accessed")
     return render_template("working.html")
 
 

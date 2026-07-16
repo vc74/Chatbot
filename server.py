@@ -342,8 +342,14 @@ def save_message(session_id: str, role: str, content: str, tokens_used: int = 0)
 # API Routes
 @app.route("/")
 def index():
+    """Serve beautiful homepage"""
+    log_analytics("page_view", data={"page": "home"})
+    return render_template("home.html")
+
+@app.route("/chat")
+def chat_page():
     """Serve main chat interface"""
-    log_analytics("page_view", data={"page": "index"})
+    log_analytics("page_view", data={"page": "chat"})
     return render_template("working.html")
 
 @app.route("/auth")

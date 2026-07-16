@@ -382,7 +382,7 @@
         });
 
         document.getElementById('continue-btn').addEventListener('click', () => {
-            window.location.href = '/';
+            window.location.href = '/chat';
         });
 
         authForm.addEventListener('submit', async (e) => {
@@ -420,7 +420,7 @@
                         localStorage.setItem('chatbot_user', JSON.stringify(result.user));
                         showMessage('Login successful! Redirecting...', 'success');
                         setTimeout(() => {
-                            window.location.href = '/';
+                            window.location.href = '/chat';
                         }, 1000);
                     } else {
                         // Show registration success with API key
@@ -441,7 +441,7 @@
         // Check if user is already logged in
         const existingApiKey = localStorage.getItem('chatbot_api_key');
         if (existingApiKey) {
-            window.location.href = '/';
+            window.location.href = '/chat';
         }
     </script>
 </body>
