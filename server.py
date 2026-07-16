@@ -655,10 +655,17 @@ if __name__ == "__main__":
     # Initialize database
     init_database()
     
+    # Get port from environment or default to 5000
+    port = int(os.environ.get("PORT", 5000))
+    
     # Run server
     app.run(
         debug=False,
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
+        port=port,
         threaded=True
     )
+else:
+    # For serverless deployments (Vercel, etc.)
+    # Initialize database when module is imported
+    init_database()
